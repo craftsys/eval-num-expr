@@ -1,0 +1,16 @@
+{
+  "name": "eval-num-expr",
+  "version": "0.1.0",
+  "description": "Evaluate numerical expressions",
+  "main": "index.js",
+  "scripts": {
+    "release": "np"
+  },
+  "keywords": [],
+  "author": "Sudhir M <https://github.com/sudkumar>",
+  "license": "ISC",
+  "devDependencies": {
+    "np": "^7.4.0",
+    "prettier": "^2.2.1"
+  }
+}
