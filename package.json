@@ -12,7 +12,8 @@
   },
   "keywords": [],
   "files": [
-    "dist"
+    "dist",
+    "types"
   ],
   "author": "Sudhir M <https://github.com/sudkumar>",
   "license": "MIT",
