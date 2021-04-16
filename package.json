@@ -7,6 +7,9 @@
     "release": "np"
   },
   "keywords": [],
+  "files": [
+    "index.js"
+  ],
   "author": "Sudhir M <https://github.com/sudkumar>",
   "license": "ISC",
   "devDependencies": {
