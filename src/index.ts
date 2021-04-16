@@ -146,23 +146,6 @@ class Operator {
     return this.associativity === Operator.LEFT_ASSOCIATIVE;
   }
 
-  protected cast(operand?: number): number {
-    if (operand === undefined) {
-      switch (this.fn) {
-        case "+":
-        case "-":
-          operand = 0;
-          break;
-        case "*":
-        case "/":
-        case "^":
-          operand = 1;
-          break;
-      }
-    }
-    return Number(operand);
-  }
-
   calculate(operandA?: number, operandB?: number): number {
     switch (this.fn) {
       case "+":
@@ -229,14 +212,6 @@ class Queue<T = any> {
   isEmpty() {
     return this.items.length === 0;
   }
-
-  top(): T {
-    return this.items[0];
-  }
-
-  toString() {
-    return JSON.stringify(this.items);
-  }
 }
 
 class Stack<T = any> {
@@ -255,8 +230,5 @@ class Stack<T = any> {
   }
   isEmpty() {
     return this.items.length === 0;
-  }
-  toString() {
-    return JSON.stringify(this.items);
   }
 }
