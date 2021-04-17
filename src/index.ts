@@ -1,10 +1,7 @@
 /**
  * https://en.wikipedia.org/wiki/Shunting-yard_algorithm
  */
-export default function evalNumExpr(
-  amount: string,
-  digitsAfterDecimal: number = 2
-): number {
+export default function evalNumExpr(amount: string): number {
   // operators with Precedence and Associativity
   const operators = [
     new Operator("-", 2),
@@ -90,22 +87,9 @@ export default function evalNumExpr(
     // stack has more than one number and we are out of operators
     throw new Error("Missing operators.");
   }
-  return normalizeNumber(values.pop(), digitsAfterDecimal);
+  return values.pop();
 }
 
-function normalizeNumber(
-  n: number,
-  digitsAfterDecimal: number | undefined = 2
-): number {
-  let str = n.toString();
-  if (digitsAfterDecimal !== undefined) {
-    str = Number(str).toFixed(digitsAfterDecimal).toString();
-  }
-  if (parseInt(str) === parseFloat(str)) {
-    str = parseInt(str).toString();
-  }
-  return Number(str);
-}
 type OperatorFns = "-" | "+" | "/" | "*" | "^";
 
 class Operator {

@@ -17,7 +17,7 @@ describe("Evaluate Numerical Expressions", () => {
   it("Grouping via parenthesis", () => {
     expect(evalNumExpr("1 +(1 +2) * 4/2")).toBe(7);
     expect(evalNumExpr("3 * ((4 + 2) / 2)")).toEqual(9);
-    expect(evalNumExpr("3 + 4 x 2 / ( 1 - 5 ) ^ 2 ^ 3")).toEqual(3);
+    expect(evalNumExpr("3 + 128 x 2 / ( 1 - 3 ) ^ 2 ^ 2")).toEqual(19);
   });
 
   it("Throws expressions for invalid inputs", () => {
