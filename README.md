@@ -32,5 +32,5 @@ You can use basic operations (e.g. +, -, \*, /, %, ^ etc.) in you expressions.
 This is the default and only from this package.
 
 ```js
-evalExpr(expressions: string, digitsAfterDecimal?: number = 2)
+evalExpr(expressions: string)
 ```
