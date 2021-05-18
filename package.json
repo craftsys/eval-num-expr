@@ -6,16 +6,24 @@
   "module": "dist/index.es.js",
   "browser": "dist/index.umd.js",
   "types": "types/index.d.ts",
+  "bin": {
+    "evalNumExpr": "bin/evalNumExpr.js"
+  },
   "scripts": {
     "build": "rollup -c",
     "release": "np --no-2fa",
     "test": "jest",
-    "test:watch": "jest --coverage --watch"
+    "watch": "rollup -c -w",
+    "docs": "serve .out",
+    "dev": "npm-run-all -p -l docs watch",
+    "test:watch": "jest --coverage --watch",
+    "postrelease": "gh-pages -d .out"
   },
   "keywords": [],
   "files": [
     "dist",
-    "types"
+    "types",
+    "bin"
   ],
   "author": "Sudhir M <https://github.com/sudkumar>",
   "license": "MIT",
@@ -24,12 +32,24 @@
     "url": "git+https://github.com/craftsys/eval-num-expr.git"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^19.0.0",
+    "@rollup/plugin-html": "^0.2.3",
+    "@rollup/plugin-node-resolve": "^13.0.0",
     "@rollup/plugin-typescript": "^8.2.1",
     "@types/jest": "^26.0.22",
+    "gh-pages": "^3.1.0",
     "jest": "^26.6.3",
     "np": "^7.4.0",
+    "npm-run-all": "^4.1.5",
     "prettier": "^2.2.1",
     "rollup": "^2.45.2",
+    "rollup-plugin-cleaner": "^1.0.0",
+    "rollup-plugin-fill-html": "^1.1.0",
+    "rollup-plugin-preserve-shebangs": "^0.2.0",
+    "rollup-plugin-svelte": "^7.1.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "serve": "^11.3.2",
+    "svelte": "^3.38.2",
     "ts-jest": "^26.5.5",
     "tslib": "^2.2.0",
     "typescript": "^4.2.4"

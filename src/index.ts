@@ -1,6 +1,3 @@
-/**
- * https://en.wikipedia.org/wiki/Shunting-yard_algorithm
- */
 export default function evalNumExpr(amount: string): number {
   // operators with Precedence and Associativity
   const operators = [
@@ -13,12 +10,25 @@ export default function evalNumExpr(amount: string): number {
   const tokens = tokenize(amount);
   const outputQueue = new Queue<string>();
   const operatorsStack = new Stack<OperatorFns | "(" | ")">();
+  /**
+   * https://en.wikipedia.org/wiki/Shunting-yard_algorithm
+   */
   for (let i = 0; i < tokens.length; i++) {
     const token = tokens[i];
     const operator = operators.find((op) => op.fn === token);
     if (!isNaN(Number(token))) {
       outputQueue.push(token);
     } else if (operator) {
+      // If we are the end, no need to handle this operator
+      if (i === tokens.length - 1) {
+        break;
+      }
+      /**
+       * while ((there is an operator at the top of the operator stack)
+       *   and ((the operator at the top of the operator stack has greater precedence)
+       *       or (the operator at the top of the operator stack has equal precedence and the token is left associative))
+       *   and (the operator at the top of the operator stack is not a left parenthesis)):
+       */
       while (
         !operatorsStack.isEmpty() &&
         operatorsStack.top() !== "(" &&
@@ -32,6 +42,7 @@ export default function evalNumExpr(amount: string): number {
       ) {
         outputQueue.push(operatorsStack.pop());
       }
+      // push it onto the operator stack.
       operatorsStack.push(operator.fn);
     } else if (token === "(") {
       operatorsStack.push("(");
@@ -41,8 +52,7 @@ export default function evalNumExpr(amount: string): number {
       }
       if (operatorsStack.top() === "(") {
         operatorsStack.pop();
-      }
-      if (operatorsStack.isEmpty()) {
+      } else if (operatorsStack.isEmpty()) {
         /* If the stack runs out without finding a left parenthesis, then there are mismatched parentheses. */
         throw new Error(`Missing "("`);
       }
@@ -137,11 +147,25 @@ class Operator {
       case "-":
         return (operandA || 0) - (operandB || 0);
       case "*":
-        return (operandA || 1) * (operandB || 1);
+        return (
+          (typeof operandA !== "undefined" ? operandA : 1) *
+          (typeof operandB !== "undefined" ? operandB : 1)
+        );
       case "/":
-        return (operandA || 1) / (operandB || 1);
+        if (operandB === 0) {
+          throw new Error(`Can not divide ${operandA} by zero`);
+        }
+        return (
+          (typeof operandA !== "undefined" ? operandA : 1) / (operandB || 1)
+        );
       case "^":
-        return Math.pow(operandA || 1, operandB || 1);
+        if (operandA === 0 && operandB === 0) {
+          throw new Error("0^0 is not a numeric value");
+        }
+        return Math.pow(
+          typeof operandA !== "undefined" ? operandA : 1,
+          typeof operandB !== "undefined" ? operandB : 1
+        );
     }
   }
 }
@@ -150,7 +174,7 @@ function tokenize(amount: string): Array<OperatorFns | "(" | ")" | string> {
   // sanitize the amount
   amount = amount
     .replace(/\s/gi, "") // replace all spaces
-    .replace(/(\d+)%/gi, "($1/100)") // replace percentage
+    .replace(/%/gi, "/100") // replace percentage; TODO: Add modulus support as well
     .replace(/[xX]/gi, "*") // replace the x with multiplier *
     .replace(/[^+-/*^\d().]/g, "")
     // i have no idea why commas were not replaced :(
@@ -158,21 +182,21 @@ function tokenize(amount: string): Array<OperatorFns | "(" | ")" | string> {
     .replace(/,/g, "");
   const keywords = ["-", "+", "/", "*", "^", "(", ")"];
   const tokens = [];
-  let holding: string = "";
+  let numberValue: string = "";
   for (let i = 0; i < amount.length; i++) {
     const char = amount[i];
     if (keywords.indexOf(char) !== -1) {
-      if (holding) {
-        tokens.push(holding);
-        holding = "";
+      if (numberValue) {
+        tokens.push(numberValue);
+        numberValue = "";
       }
       tokens.push(char);
     } else {
-      holding += char;
+      numberValue += char;
     }
   }
-  if (holding) {
-    tokens.push(holding);
+  if (numberValue) {
+    tokens.push(numberValue);
   }
   return tokens;
 }
