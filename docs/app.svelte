@@ -21,7 +21,7 @@
 <div class="max-w-sm mx-auto">
   <div class="p-4">
     <h1>Evaluate Numeric Expressions (Playground)</h1>
-    <a href="https://craftsys.github.io/eval-num-expr">GitHub</a>
+    <a href="https://github.com/craftsys/eval-num-expr">GitHub</a>
   </div>
   <div class="p-4">
     <div class="flex">
