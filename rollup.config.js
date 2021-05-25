@@ -8,6 +8,7 @@ import svelte from "rollup-plugin-svelte";
 import html from "@rollup/plugin-html";
 import cleaner from "rollup-plugin-cleaner";
 import { preserveShebangs } from "rollup-plugin-preserve-shebangs";
+import replace from "@rollup/plugin-replace";
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -61,6 +62,10 @@ export default [
       }), // handle svelte
       typescript({ sourceMap: true }),
       production && terser(), // minify, but only in production
+      replace({
+        APP_VERSION: process.env.npm_package_version,
+        preventAssignment: true,
+      }),
       html({
         filename: "index.html",
         title: "Evaluate Numeric Expressions",
