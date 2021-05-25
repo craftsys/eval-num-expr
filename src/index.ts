@@ -193,8 +193,8 @@ function tokenize(
     .replace(/\s/gi, "") // replace all spaces
     .replace(/[xX]/gi, "*") // replace the x with multiplier *
     .replace(/[^+-/*^\d().%]/g, "")
-    .replace(/\+(\d+)%(?![*/(\d])/gi, "add_percentage$1")
-    .replace(/-(\d+)%(?![*/(\d])/gi, "sub_percentage$1")
+    .replace(/\+([\d.]+)%(?![*/%(\d])/gi, "add_percentage$1")
+    .replace(/-([\d.]+)%(?![*/%(\d])/gi, "sub_percentage$1")
     .replace(/%([\d(])/gi, "/100*$1")
     .replace(/%/gi, "/100")
     // i have no idea why commas were not replaced :(

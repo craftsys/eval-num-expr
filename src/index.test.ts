@@ -17,6 +17,8 @@ describe("Evaluate Numerical Expressions", () => {
 
   it("Handle % for tax", () => {
     expect(evalNumExpr("10+18%")).toBe(11.8);
+    expect(evalNumExpr("10+18.0%")).toBe(11.8);
+    expect(evalNumExpr("10-18.0%")).toBe(8.2);
     expect(evalNumExpr("10+10+18%")).toBe(23.6);
     expect(evalNumExpr("100+(10+10+18%)")).toBe(123.6);
     expect(evalNumExpr("175 + 40 + 18%")).toBe(253.7);
@@ -24,6 +26,7 @@ describe("Evaluate Numerical Expressions", () => {
   it("Handle % for percentage", () => {
     expect(evalNumExpr("2*5+6%2")).toBe(10.12); // 2 * 5 + 6/100 * 2
     expect(evalNumExpr("10*6%")).toBe(0.6);
+    expect(evalNumExpr("20+20%%")).toBe(20.002);
     expect(evalNumExpr("10 + 10*5%")).toBe(10.5);
     expect(evalNumExpr("10 + (100 - 100 * 18%) * 5 + 40 / 20")).toBe(422);
   });
