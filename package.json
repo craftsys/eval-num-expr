@@ -11,6 +11,7 @@
   },
   "scripts": {
     "build": "rollup -c",
+    "prerelease": "npm run build",
     "release": "np --no-2fa",
     "test": "jest",
     "watch": "rollup -c -w",
