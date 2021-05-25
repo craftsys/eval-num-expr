@@ -3,12 +3,14 @@ export default function evalNumExpr(amount: string): number {
   const operators = [
     new Operator("-", 2),
     new Operator("+", 2),
+    new Operator("add_percentage", 2),
+    new Operator("sub_percentage", 2),
     new Operator("/", 3),
     new Operator("*", 3),
     new Operator("^", 4),
   ];
   const tokens = tokenize(amount);
-  const outputQueue = new Queue<string>();
+  const outputQueue = new Queue<string | number>();
   const operatorsStack = new Stack<OperatorFns | "(" | ")">();
   /**
    * https://en.wikipedia.org/wiki/Shunting-yard_algorithm
@@ -100,7 +102,14 @@ export default function evalNumExpr(amount: string): number {
   return values.pop();
 }
 
-type OperatorFns = "-" | "+" | "/" | "*" | "^";
+type OperatorFns =
+  | "-"
+  | "+"
+  | "/"
+  | "*"
+  | "^"
+  | "add_percentage"
+  | "sub_percentage";
 
 class Operator {
   static readonly LEFT_ASSOCIATIVE = 0;
@@ -118,6 +127,8 @@ class Operator {
       case "+":
       case "*":
       case "/":
+      case "add_percentage":
+      case "sub_percentage":
         this.associativity = Operator.LEFT_ASSOCIATIVE;
         break;
       case "^":
@@ -146,6 +157,10 @@ class Operator {
         return (operandA || 0) + (operandB || 0);
       case "-":
         return (operandA || 0) - (operandB || 0);
+      case "add_percentage":
+        return (operandA || 0) + ((operandA || 0) * (operandB || 0)) / 100;
+      case "sub_percentage":
+        return (operandA || 0) - ((operandA || 0) * (operandB || 0)) / 100;
       case "*":
         return (
           (typeof operandA !== "undefined" ? operandA : 1) *
@@ -170,33 +185,51 @@ class Operator {
   }
 }
 
-function tokenize(amount: string): Array<OperatorFns | "(" | ")" | string> {
+function tokenize(
+  amount: string
+): Array<OperatorFns | "(" | ")" | string | number> {
   // sanitize the amount
   amount = amount
     .replace(/\s/gi, "") // replace all spaces
-    .replace(/%/gi, "/100") // replace percentage; TODO: Add modulus support as well
     .replace(/[xX]/gi, "*") // replace the x with multiplier *
-    .replace(/[^+-/*^\d().]/g, "")
+    .replace(/[^+-/*^\d().%]/g, "")
+    .replace(/\+(\d+)%(?![*/(\d])/gi, "add_percentage$1")
+    .replace(/-(\d+)%(?![*/(\d])/gi, "sub_percentage$1")
+    .replace(/%([\d(])/gi, "/100*$1")
+    .replace(/%/gi, "/100")
     // i have no idea why commas were not replaced :(
     // it works in Test Env (NodeJs)
     .replace(/,/g, "");
-  const keywords = ["-", "+", "/", "*", "^", "(", ")"];
+  const keywords = ["-", "+", "/", "*", "^", "%", "(", ")"];
   const tokens = [];
-  let numberValue: string = "";
+  let token: string = "";
   for (let i = 0; i < amount.length; i++) {
     const char = amount[i];
-    if (keywords.indexOf(char) !== -1) {
-      if (numberValue) {
-        tokens.push(numberValue);
-        numberValue = "";
-      }
-      tokens.push(char);
-    } else {
-      numberValue += char;
+    const nextChar = amount[i + 1] || "";
+    token += char;
+    switch (true) {
+      case !isNaN(Number(token)) &&
+        Number.isFinite(Number(token)) &&
+        isNaN(Number(nextChar)) &&
+        nextChar !== ".":
+        tokens.push(Number(token));
+        token = "";
+        break;
+      case keywords.indexOf(token) !== -1:
+        tokens.push(token);
+        token = "";
+        break;
+      case token === "add_percentage":
+      case token === "sub_percentage":
+        tokens.push(token);
+        token = "";
+        break;
+      default:
+        break;
     }
   }
-  if (numberValue) {
-    tokens.push(numberValue);
+  if (token) {
+    tokens.push(token);
   }
   return tokens;
 }
